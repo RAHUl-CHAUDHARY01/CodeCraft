@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(uuid())
+  username         String
+  password         String
+  email            String
+  profilePic       String?   @default("person3.png")
+  socialProfiles   Json? //will store social media links
+  twoFactorEnabled Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  codes            Code[]
+  projects         Project[]
+  subscriptions Subscription[]
+  notifications Notification[]
+  achievements  Achievement[]
+}
+
+model Code {
+  id         String   @id @default(uuid())
+  language   String
+  sourceCode String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+  folders     Folder[]
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  name      String
+  createdAt DateTime @default(now())
+  files File[]
+}
+model File{
+    id        String  @id @default(uuid())
+  name      String
+  content   String  // Code content
+  folderId  String
+  folder    Folder @relation(fields: [folderId], references: [id])
+}
+model Subscription{
+  id  String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  plan String
+  createdAt DateTime @default(now())
+}
+model Notification{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  message String
+  createdAT DateTime @default(now())
+}
+model Achievement{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  type String //ex Coding Strak , Community Engagement
+  details String
+  createdAt DateTime @default(now())
+}
