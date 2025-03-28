@@ -25,6 +25,7 @@ const Signup = () => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(result.user, { displayName: name });
+      localStorage.setItem('username', name);
       navigate('/home');
     } catch (error) {
       setError(error.message);

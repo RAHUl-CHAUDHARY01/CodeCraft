@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id               String    @id @default(uuid())
-  username         String
+  username         String @unique
   password         String
   email            String
   profilePic       String?   @default("person3.png")
@@ -21,6 +21,7 @@ model User {
   subscriptions Subscription[]
   notifications Notification[]
   achievements  Achievement[]
+  templates Template[]
 }
 
 model Code {
@@ -31,7 +32,15 @@ model Code {
   user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
 }
-
+model Template {
+  id String @id @default(uuid())
+  language String
+  sourceCode String
+  userId String
+  user User @relation(fields: [userId],references: [id])
+  createdAt DateTime @default(now())
+  lastUpdated DateTime @updatedAt
+}
 model Project {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

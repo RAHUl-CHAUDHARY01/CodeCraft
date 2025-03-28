@@ -84,7 +84,57 @@ app.post('/projects/:folderId/files',async (req ,res)=>{
         res.status(400).json({message:"Something went wrong",error});
     }
 })
+app.post('/user/code', async (req: Request, res: Response): Promise<void> => {
+    const { userId, language, code } = req.body;
 
+    try {
+        // Find the user by username to get the correct userId
+        const user = await client.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+        }
+        else{
+
+            
+            // Create the code entry with the correct userId
+            const userCode = await client.code.create({
+            data: {
+                userId: user.id, // Use the user's UUID, not username
+                language,
+                sourceCode: code
+            }
+        });   
+        res.json(userCode);
+    }
+    } catch (error) {
+        res.status(400).json({ message: "Something went wrong", error });
+    }
+});
+
+app.post('/validate-google-user', async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { email } = req.body;
+
+        const user = await client.user.findFirst({
+            where: { email }
+        });
+
+        if (!user) {
+            res.status(401).json({ message: "Google account not registered. Please sign up first." });
+            return;
+        }
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong", error });
+    }
+});
+app.post('/user/createtemplate',async (req ,res)=>{
+    const template = await client.
+})
 
 app.listen(3000);
 

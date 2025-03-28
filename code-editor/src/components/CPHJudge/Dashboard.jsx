@@ -110,7 +110,7 @@ const CodeCraftDashboard = () => {
             </button>
             <div className="flex items-center ">
               <img src={person3} className='rounded-full w-8 h-8'/>
-              <span className="hidden md:inline-block font-medium">Rahul Kumar</span>
+              <span className="hidden md:inline-block font-medium">{localStorage.getItem('username')}</span>
             </div>
           </div>
         </header>
